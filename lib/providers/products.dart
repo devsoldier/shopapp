@@ -68,11 +68,11 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  void addProduct(Product product) {
+  Future<void> addProduct(Product product) async {
     var url = Uri.https(
         'flutter-test-70387-default-rtdb.asia-southeast1.firebasedatabase.app',
-        '/products.json');
-    http
+        '/products');
+    return http
         .post(
       url,
       body: json.encode({
@@ -90,14 +90,14 @@ class Products with ChangeNotifier {
         description: product.description,
         price: product.price,
         imageUrl: product.imageUrl,
-        id: DateTime.now().toString(),
+        id: json.decode(response.body)['name'],
       );
       _items.add(newProduct);
       notifyListeners();
+    }).catchError((error) {
+      print(error);
+      throw error;
     });
-
-    // _items.insert(0, newProduct);//starts at beginning of the list
-    // notifyListeners();
   }
 
   void updateProduct(String id, Product newProduct) {
